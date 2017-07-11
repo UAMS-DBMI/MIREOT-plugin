@@ -2,9 +2,13 @@
 
 This plugin performs the MIREOT plugin through Protege via a convinent drag and drop interface.
 
-#### Build Prerequisites
+The current version can be downloaded on the [Release](https://github.com/UAMS-DBMI/MIREOT-plugin/releases) page of this repository.
 
-To build and run the examples, you must have the following items installed:
+
+
+#### Development Prerequisites
+
+If you need to build this plugin the following is required.
 
 + Apache's [Maven](http://maven.apache.org/index.html).
 + A tool for checking out a [Git](http://git-scm.com/) repository.
@@ -12,7 +16,7 @@ To build and run the examples, you must have the following items installed:
 
 #### Build and install of plug-ins
 
-1. Get a copy of the example code:
+1. Get a copy of this code:
 
         git clone https://github.com/UAMS-DBMI/MIREOT-plugin.git 
     
