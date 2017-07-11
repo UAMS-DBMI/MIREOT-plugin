@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+   
+   <!-- views -->   
+   <extension
+   		id="ClassView"
+   		point="org.protege.editor.core.application.ViewComponent">
+   		<label 
+   			value = "MIREOT Class Hierarchy">
+   		</label>
+   		<class 
+   			value="edu.uams.dbmi.protege.plugin.mireot.view.ClassView">
+   		</class>
+   		<category 
+   			value ="@org.protege.classcategory">
+   		</category>
+   		<headerColor value="@org.protege.classcolor"/>
+   </extension>
+   
+   <extension
+   		id="ObjectPropertyView"
+   		point="org.protege.editor.core.application.ViewComponent">
+   		<label 
+   			value = "MIREOT Object Property Hierarchy">
+   		</label>
+   		<class 
+   			value="edu.uams.dbmi.protege.plugin.mireot.view.ObjectPropertyView">
+   		</class>
+   		<category 
+   			value ="@org.protege.objectpropertycategory">
+   		</category>
+        <headerColor value="@org.protege.objectpropertycolor"/>
+   		
+   </extension>
+   
+   <extension
+         id="AdditionalOntologyView"
+         point="org.protege.editor.core.application.ViewComponent">
+      <label
+            value="MIREOT Additional Ontology View">
+      </label>
+      <class
+            value="edu.uams.dbmi.protege.plugin.mireot.view.AdditionalOntologyView">
+      </class>
+      <category
+            value="@org.protege.querycategory">
+      </category>
+      <headerColor value="@org.protege.ontologycolor"/>
+      
+   </extension>
+   
+   <extension
+   		id="MIREOTMetrics"
+   		point="org.protege.editor.core.application.ViewComponent">
+   		<label 
+   			value = "MIREOT Metrics">
+   		</label>
+   		<class 
+   			value="edu.uams.dbmi.protege.plugin.mireot.view.MIREOTSummaryStatisticsView">
+   		</class>
+   		<category 
+   			value ="@org.protege.ontologycategory">
+   		</category>
+   		<headerColor value="@org.protege.ontologycolor"/>
+   </extension>
+   
+   <!-- Tabs -->
+   
+   <extension
+         id="MIREOTTab"
+         point="org.protege.editor.core.application.WorkspaceTab">
+      <label
+            value="MIREOT">
+      </label>
+      <class
+            value="edu.uams.dbmi.protege.plugin.mireot.tab.MIREOTTab">
+      </class>
+      <index
+            value="X">
+      </index>
+      <editorKitId
+            value="OWLEditorKit">
+      </editorKitId>
+      <defaultViewConfigFileName
+            value="viewconfig-MIREOTTab.xml">
+      </defaultViewConfigFileName>
+   </extension>
+
+</plugin>

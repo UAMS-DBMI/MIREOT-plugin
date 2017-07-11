@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<groupId>edu.uams.dbmi</groupId>
+	<artifactId>protege.plugin.mireot</artifactId>
+	<version>0.0.1</version>
+	<packaging>bundle</packaging>
+
+	<name>MIREOT Plugin</name>
+	<description>A test update of the MIREOT plugin.</description>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+    <repositories>
+        <repository>
+            <id>maven2</id>
+            <name>maven2</name>
+            <url>http://repo1.maven.org/maven2/</url>
+        </repository>
+    </repositories>
+
+  	
+	<dependencies>
+        <dependency>
+			<groupId>edu.stanford.protege</groupId>
+            <artifactId>org.coode.dlquery</artifactId>
+			<version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.stanford.protege</groupId>
+            <artifactId>org.coode.owlviz</artifactId>
+            <version>4.1.5</version>
+        </dependency>
+		<dependency>
+			<groupId>edu.stanford.protege</groupId>
+			<artifactId>org.protege.common</artifactId>
+			<version>5.0.0-beta-17</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.stanford.protege</groupId>
+			<artifactId>org.protege.editor.core.application</artifactId>
+			<version>5.0.0-beta-17</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.owlapi</groupId>
+			<artifactId>owlapi-api</artifactId>
+			<version>4.3.0</version>
+		</dependency>
+        <dependency>
+			<groupId>edu.stanford.protege</groupId>
+            <artifactId>protege-editor-owl</artifactId>
+			<version>5.0.0</version>
+        </dependency>
+		<dependency>
+			<groupId>net.java.dev.glazedlists</groupId>
+			<artifactId>glazedlists_java15</artifactId>
+			<version>1.9.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<version>4.3.0</version>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>59.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.jgoodies</groupId>
+            <artifactId>jgoodies-forms</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+    </dependencies>
+
+	<build>
+
+		<resources>
+			<resource>
+				<!-- Use resource filtering to replace references to the artifactId in the plugin.xml file -->
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.3</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+            
+            <plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>3.0.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-Activator>org.protege.editor.owl.ProtegeOWL</Bundle-Activator>
+						<Bundle-ClassPath>.</Bundle-ClassPath>
+						<Bundle-SymbolicName>${project.artifactId};singleton:=true</Bundle-SymbolicName>
+						<Bundle-Vendor>UAMS</Bundle-Vendor>
+						<Import-Package>
+							org.protege.editor.owl.*;version="5.0.0", <!-- equivalent to [4.3,infinity) -->
+                            ca.odell.glazedlists.*;resolution:=optional,
+							*
+						</Import-Package>
+					</instructions>
+				</configuration>
+            </plugin>
+            
+			<plugin>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<pde>true</pde>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
