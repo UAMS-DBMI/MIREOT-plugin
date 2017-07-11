@@ -18,7 +18,7 @@ To build and run the examples, you must have the following items installed:
     
 2. Change into the MIREOT-plugin directory.
 
-3. Type `mvn clean package`.  On build completion, the "target" directory will contain a protege.plugin.examples-${version}.jar file.
+3. Type `mvn clean package`.  On build completion, the "target" directory will contain a protege.plugin.mireot-${version}.jar file.
 
 4. Copy the JAR file from the target directory to the "plugins" subdirectory of your Protege distribution.
  
