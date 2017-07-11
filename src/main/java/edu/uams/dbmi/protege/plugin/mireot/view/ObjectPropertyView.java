@@ -10,11 +10,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.DropMode;
 import javax.swing.Icon;
@@ -66,12 +62,18 @@ implements DropTargetListener{
 
 	}
 
+
 	protected boolean isOWLObjectPropertyView() {
 		return true;
 	}
 
 	protected OWLObjectHierarchyProvider<OWLObjectProperty> getHierarchyProvider() {
 		return getOWLModelManager().getOWLHierarchyManager().getOWLObjectPropertyHierarchyProvider();
+	}
+
+	protected Optional<OWLObjectHierarchyProvider<OWLObjectProperty>> getInferredHierarchyProvider() {
+		return Optional.of(getOWLModelManager().getOWLHierarchyManager().
+				getInferredOWLObjectPropertyHierarchyProvider());
 	}
 
 	protected OWLSubPropertyAxiom<?> getSubPropertyAxiom(OWLObjectProperty child, OWLObjectProperty parent) {

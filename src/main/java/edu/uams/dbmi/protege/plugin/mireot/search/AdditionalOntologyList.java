@@ -16,9 +16,9 @@ public class AdditionalOntologyList {
 	Properties propFile = new Properties();
 
 	public AdditionalOntologyList() {
-		
+
 		try {
-			propFile.load(this.getClass().getResourceAsStream("/main/resources/ontologyURImappings.properties"));  //Fixed NUll pointer exception
+			propFile.load(this.getClass().getResourceAsStream("/ontologyURImappings.properties"));  //Fixed NUll pointer exception
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

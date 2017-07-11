@@ -38,8 +38,6 @@ import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
 import org.semanticweb.owlapi.model.OWLOntologyStorageException;
 
-import ca.odell.glazedlists.GlazedLists;
-import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import edu.uams.dbmi.protege.plugin.mireot.search.AdditionalOntologyList;
 import edu.uams.dbmi.protege.plugin.mireot.search.AdditionalOntologySearcher;
 import edu.uams.dbmi.protege.plugin.mireot.search.result.ClassSearchResult;
@@ -191,10 +189,12 @@ public class AdditionalOntologyView extends AbstractOWLViewComponent {
         
         this.ontologySelectBox = new JComboBox(ddla.getNames());
         this.ontologySelectBox.setEditable(true);
-        
+
+        /* - Joseph 2017 - removing glazed lists because of maven problems
         AutoCompleteSupport<String> support = AutoCompleteSupport.install(
                 this.ontologySelectBox, GlazedLists.eventListOf(ddla.getNames()));
         support.setStrict(true);
+        */
         
         JButton loadFromFileButton = new JButton("Load From File");
         JButton loadFromURLButton = new JButton("Load From URL");

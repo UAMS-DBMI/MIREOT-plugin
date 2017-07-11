@@ -11,11 +11,7 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.DropMode;
 import javax.swing.tree.TreePath;
@@ -54,7 +50,7 @@ import edu.uams.dbmi.protege.plugin.mireot.search.transferable.OWLClassTransfera
 
 /**
  * View that contains a tree representing the active ontology
- * 
+ *
  * @author Chen Cheng, Josh Hanna
  */
 public class ClassView extends AbstractOWLClassHierarchyViewComponent implements
@@ -134,6 +130,11 @@ DropTargetListener {
 	protected OWLObjectHierarchyProvider<OWLClass> getHierarchyProvider() {
 		return getOWLModelManager().getOWLHierarchyManager()
 				.getOWLClassHierarchyProvider();
+	}
+
+	protected Optional<OWLObjectHierarchyProvider<OWLClass>> getInferredHierarchyProvider() {
+		return Optional.of(getOWLModelManager().getOWLHierarchyManager()
+				.getInferredOWLClassHierarchyProvider());
 	}
 
 	public boolean canCreateNew() {
@@ -307,7 +308,7 @@ DropTargetListener {
 	private void handleRemoteDrop(OWLClassMessage msg, OWLClass active) {
 		OWLAnnotationProperty importedFromProperty = getOWLDataFactory().getOWLAnnotationProperty(IRI.create("http://purl.obolibrary.org/obo/IAO_0000412"));
 		OWLAnnotationProperty label = getOWLDataFactory().getRDFSLabel();
-		
+
 		OWLClass cls = msg.getOntClass();
 		OWLOntology ontology = msg.getOntology();
 
@@ -328,7 +329,7 @@ DropTargetListener {
 				annotations.remove(annotation);
 				continue;
 			}
-			
+
 			//checking for annotation property labels
 			Set<OWLAnnotation> propertyAnnotations = new HashSet<>(EntitySearcher.getAnnotations(annotation.getProperty().getIRI(), ontology, label));
 
@@ -336,39 +337,39 @@ DropTargetListener {
 			for(OWLOntology ont : ontology.getImports()){
 				propertyAnnotations.addAll(EntitySearcher.getAnnotations(annotation.getProperty().getIRI(), ont, label));
 			}
-			
-			
+
+
 			for (OWLAnnotation propertyAnnotation : propertyAnnotations) {
 				OWLAxiom ax = getOWLModelManager().getOWLDataFactory().getOWLAnnotationAssertionAxiom(annotation.getProperty().getIRI(), propertyAnnotation);
 				changes.add(new AddAxiom((getOWLModelManager().getActiveOntology()), ax));
 			}
 
-			
-			
+
+
 		}
-		
+
 		OWLAnnotation importedFromAnnotation = null;
-		
+
 		if(ontology.getOntologyID().getOntologyIRI() != null){
 			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(ontology.getOntologyID().getOntologyIRI().toString()));
 		} else {
 			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(msg.getURL()));
 		}
-		
+
 		OWLAxiom ax = getOWLDataFactory().getOWLAnnotationAssertionAxiom(label, importedFromProperty.getIRI(), getOWLDataFactory().getOWLLiteral("imported from", "en"));
 		changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), ax));
-		
+
 		annotations.add(importedFromAnnotation);
 
 		getOWLModelManager().applyChanges(changes);
-		addClass(cls, active, annotations, null);		
-		
+		addClass(cls, active, annotations, null);
+
 	}
 
 	@SuppressWarnings("unchecked")
 	private void handleLocalDrop(Transferable trans, OWLClass active) {
-		
-		
+
+
 		ArrayList<OWLObject> objects = null;
 		try {
 			objects = (ArrayList<OWLObject>) trans.getTransferData(OWLObjectDataFlavor.OWL_OBJECT_DATA_FLAVOR);
@@ -379,42 +380,42 @@ DropTargetListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		OWLOntology ontology = this.getOWLModelManager().getActiveOntology();
-			
+
 		// get the proper manager, factory, ontology
 		OWLModelManager mgr = getOWLModelManager();
-		
+
 		ontology = mgr.getActiveOntology();
-		
+
 		OWLClass additional = null;
 		if(objects.get(0) instanceof OWLClass) {
 			additional = (OWLClass) objects.get(0);
 		} else {
 			return;
 		}
-		
+
 		// get the parent of the additional class.
 		Set<OWLClassExpression> sup = new HashSet<>(EntitySearcher.getSuperClasses(additional, ontology));
 		Iterator<OWLClassExpression> s = sup.iterator();
-	
-		// the first element in the superclass set is the parent 
+
+		// the first element in the superclass set is the parent
 		OWLClassExpression oc = null;
-	
+
 		if (s.hasNext()) {
 			oc = s.next();
 		}
-	
+
 		OWLClass fromParent = null;
-		
+
 		if(oc != null){
 			fromParent = oc.asOWLClass();
-		} 
-		
+		}
+
 		// get the set of annotations for the additional class
 		Set<OWLAnnotation> anots = new HashSet<>(EntitySearcher.getAnnotations(additional.getIRI(), ontology));
 
-		addClass(additional, active, anots, fromParent);		
+		addClass(additional, active, anots, fromParent);
 	}
 
 
@@ -426,7 +427,7 @@ DropTargetListener {
 	/**
 	 * This method removes the current parent for a child and assigns it a new
 	 * one while preserving the annotations
-	 * 
+	 *
 	 * @param child
 	 *            the class that is being dropped
 	 * @param parent
@@ -442,32 +443,32 @@ DropTargetListener {
 		if (child.equals(getOWLModelManager().getOWLDataFactory().getOWLThing())) {
 			return;
 		}
-		
+
 		List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>();
-		
+
 		// add all the annotations into the child
 		for (OWLAnnotation an : annots) {
 			OWLAxiom ax = getOWLModelManager().getOWLDataFactory().getOWLAnnotationAssertionAxiom(child.getIRI(), an);
 			changes.add(new AddAxiom((getOWLModelManager().getActiveOntology()), ax));
 		}
-		
+
 		OWLDataFactory df = getOWLModelManager().getOWLDataFactory();
-		
+
 		// only used for local moves
 		if(fromParent != null){
 			// remove original parent
 			changes.add(new RemoveAxiom(getOWLModelManager().getActiveOntology(), df.getOWLSubClassOfAxiom(child, fromParent)));
 		}
-		
+
 		// add new parent
 		changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), df.getOWLDeclarationAxiom(child)));
-		
+
 		if (!df.getOWLThing().equals(parent)) {
 			changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), df.getOWLSubClassOfAxiom(child, parent)));
 		}
-		
+
 		getOWLModelManager().applyChanges(changes);
-		
+
 	}
-	
+
 }
