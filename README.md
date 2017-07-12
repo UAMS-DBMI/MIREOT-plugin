@@ -5,6 +5,10 @@ This plugin performs the MIREOT plugin through Protege via a convinent drag and 
 The current version can be downloaded on the [Release](https://github.com/UAMS-DBMI/MIREOT-plugin/releases) page of this repository.
 
 
+### Credit
+
+This plugin was originally developed at [UAMS](http://dbmi.uams.edu/) by Chen Cheng and Josh Hanna.  Their original source code is available at [Bitbucket](https://bitbucket.org/uamsdbmi/mireot-protege-plugin/overview).
+
 
 #### Development Prerequisites
 
