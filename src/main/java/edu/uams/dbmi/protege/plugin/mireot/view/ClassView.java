@@ -71,6 +71,11 @@ DropTargetListener {
 					public void selectionChanged() throws Exception {
 						final OWLObject owlObject = getOWLWorkspace().getOWLSelectionModel().getSelectedObject();
 
+                        // Sometimes owlObject is null during a tab change?
+                        if(owlObject == null){
+                            return;
+                        }
+
 						Set<OWLClass> oc = owlObject.getClassesInSignature();
 
 						Iterator<OWLClass> classes = oc.iterator();
@@ -351,7 +356,7 @@ DropTargetListener {
 		OWLAnnotation importedFromAnnotation = null;
 
 		if(ontology.getOntologyID().getOntologyIRI() != null){
-			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(ontology.getOntologyID().getOntologyIRI().toString()));
+			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(ontology.getOntologyID().getOntologyIRI().get().toString()));
 		} else {
 			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(msg.getURL()));
 		}
