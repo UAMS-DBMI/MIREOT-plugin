@@ -1,5 +1,8 @@
 # MIREOT Plugin 
 
+<p align="center">
+  <img src="https://github.com/UAMS-DBMI/MIREOT-plugin/blob/master/screenshot.png?raw=true" alt="Screenshot"/>
+</p>
 This plugin allows for ontology terms to be imported with the Minimum Information to Reference an
 External Ontology Term (MIREOT) inside of Protege via a convinent drag and drop interface.
 
