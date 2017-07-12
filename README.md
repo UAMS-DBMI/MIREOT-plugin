@@ -1,6 +1,9 @@
 # MIREOT Plugin 
 
-This plugin performs the MIREOT plugin through Protege via a convinent drag and drop interface.
+This plugin allows for ontology terms to be imported with the Minimum Information to Reference an
+External Ontology Term (MIREOT) inside of Protege via a convinent drag and drop interface.
+
+Details of the implementation are addressed in a [conference paper](http://ceur-ws.org/Vol-914/paper_48.pdf) from the International Semantic Web Conference 2012.
 
 The current version can be downloaded on the [Release](https://github.com/UAMS-DBMI/MIREOT-plugin/releases) page of this repository.
 
