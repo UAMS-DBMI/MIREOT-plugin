@@ -291,7 +291,7 @@ implements DropTargetListener{
 		OWLAnnotation importedFromAnnotation = null;
 
 		if(ontology.getOntologyID().getOntologyIRI() != null){
-			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(ontology.getOntologyID().getOntologyIRI().toString()));
+			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(ontology.getOntologyID().getOntologyIRI().get().toString()));
 		} else {
 			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(msg.getURL()));
 		}
