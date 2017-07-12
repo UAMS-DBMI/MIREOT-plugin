@@ -188,9 +188,9 @@ public class AdditionalOntologyView extends AbstractOWLViewComponent {
 
         
         this.ontologySelectBox = new JComboBox(ddla.getNames());
-        this.ontologySelectBox.setEditable(true);
 
         /* - Joseph 2017 - removing glazed lists because of maven problems
+        this.ontologySelectBox.setEditable(true);
         AutoCompleteSupport<String> support = AutoCompleteSupport.install(
                 this.ontologySelectBox, GlazedLists.eventListOf(ddla.getNames()));
         support.setStrict(true);

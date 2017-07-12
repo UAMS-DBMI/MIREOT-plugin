@@ -4,7 +4,7 @@
 
 	<groupId>edu.uams.dbmi</groupId>
 	<artifactId>protege.plugin.mireot</artifactId>
-	<version>2.1.1</version>
+	<version>2.1.2</version>
 	<packaging>bundle</packaging>
 
 	<name>MIREOT</name>
@@ -13,15 +13,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-
-    <repositories>
-        <repository>
-            <id>maven2</id>
-            <name>maven2</name>
-            <url>http://repo1.maven.org/maven2/</url>
-        </repository>
-    </repositories>
-
 
 	<dependencies>
         <dependency>
@@ -50,11 +41,6 @@
 			<version>4.3.0</version>
 		</dependency>
 		<dependency>
-			<groupId>net.java.dev.glazedlists</groupId>
-			<artifactId>glazedlists_java15</artifactId>
-			<version>1.9.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
 			<version>4.3.0</version>
@@ -70,10 +56,9 @@
             <artifactId>jgoodies-forms</artifactId>
             <version>1.6.0</version>
         </dependency>
-    </dependencies>
+	</dependencies>
 
 	<build>
-
 		<resources>
 			<resource>
 				<!-- Use resource filtering to replace references to the artifactId in the plugin.xml file -->
@@ -106,7 +91,6 @@
 						<Bundle-Vendor>UAMS</Bundle-Vendor>
 						<Import-Package>
 							org.protege.editor.owl.*;version="5.1.0", <!-- equivalent to [4.3,infinity) -->
-                            ca.odell.glazedlists.*;resolution:=optional,
 							*
 						</Import-Package>
 					</instructions>
