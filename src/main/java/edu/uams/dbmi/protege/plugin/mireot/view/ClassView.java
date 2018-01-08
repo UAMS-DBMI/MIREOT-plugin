@@ -355,9 +355,9 @@ DropTargetListener {
 
 		OWLAnnotation importedFromAnnotation = null;
 
-		if(ontology.getOntologyID().getVersionIRI() != null){
+		if(ontology.getOntologyID().getVersionIRI().isPresent()){
 			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(ontology.getOntologyID().getVersionIRI().get().toString()));
-		} else if(ontology.getOntologyID().getOntologyIRI() != null){
+		} else if(ontology.getOntologyID().getOntologyIRI().isPresent()){
 			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(ontology.getOntologyID().getOntologyIRI().get().toString()));
 		} else {
 			importedFromAnnotation = getOWLDataFactory().getOWLAnnotation(importedFromProperty, getOWLDataFactory().getOWLLiteral(msg.getURL()));
