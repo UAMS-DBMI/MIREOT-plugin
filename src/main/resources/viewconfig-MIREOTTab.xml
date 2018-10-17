@@ -12,7 +12,13 @@
                     <Property id="pluginId" value="protege.plugin.mireot.ObjectPropertyView"/>
                 </Component>
             </CNode>
+            <CNode>
+                <Component label="MIREOT Datatype Property Hierarchy">
+                    <Property id="pluginId" value="protege.plugin.mireot.DatatypePropertyView"/>
+                </Component>
+            </CNode>
         </HSNode>
+        
         <CNode>
             <Component label="MIREOT Additional Ontology View">
                 <Property id="pluginId" value="protege.plugin.mireot.AdditionalOntologyView"/>

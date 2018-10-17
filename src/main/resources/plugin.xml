@@ -35,6 +35,23 @@
    		
    </extension>
    
+   
+      <extension
+   		id="DatatypePropertyView"
+   		point="org.protege.editor.core.application.ViewComponent">
+   		<label 
+   			value = "MIREOT Datatype Property Hierarchy">
+   		</label>
+   		<class 
+   			value="edu.uams.dbmi.protege.plugin.mireot.view.DatatypePropertyView">
+   		</class>
+   		<category 
+   			value ="@org.protege.datapropertycategory">
+   		</category>
+        <headerColor value="@org.protege.datapropertycolor"/>
+   		
+   </extension>
+   
    <extension
          id="AdditionalOntologyView"
          point="org.protege.editor.core.application.ViewComponent">

@@ -7,6 +7,7 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.semanticweb.owlapi.vocab.SKOSVocabulary;
 
 import edu.uams.dbmi.protege.plugin.mireot.search.result.ClassSearchResult;
+import edu.uams.dbmi.protege.plugin.mireot.search.result.DatatypePropertySearchResult;
 import edu.uams.dbmi.protege.plugin.mireot.search.result.ObjectPropertySearchResult;
 import edu.uams.dbmi.protege.plugin.mireot.search.result.SearchResult;
 import edu.uams.dbmi.protege.plugin.mireot.search.result.table.ResultTableCellRenderer;
@@ -57,6 +58,7 @@ public class AdditionalOntologySearcher {
 
 	private boolean searchClasses = true;
 	private boolean searchObjectProperties = false;
+	private boolean searchDataTypeProperties = false;
 
 	private boolean optionsChanged;
 
@@ -169,6 +171,15 @@ public class AdditionalOntologySearcher {
 		this.searchObjectProperties = searchObjectProperties;
 		optionsChanged = true;
 	}
+	
+	public boolean searchDataTypePropertiesFlag() {
+		return searchDataTypeProperties;
+	}
+
+	public void setSearchDataTypePropertiesFlag(boolean searchDataTypeProperties) {
+		this.searchDataTypeProperties = searchDataTypeProperties;
+		optionsChanged = true;
+	}
 
 	public void setUrl(String ontUrl) {
 		this.ontUrl = ontUrl;
@@ -270,7 +281,7 @@ public class AdditionalOntologySearcher {
 	 * Loads and then searches ontology based on options
 	 * 
 	 * @author Josh Hanna
-	 * @return ArrayList of SearchResult that represents matching Object Properties
+	 * @return ArrayList of SearchResult that represents matching Object/Datatype Properties
 	 *         and/or Classes (depending on options)
 	 * @throws IOException
 	 * @throws OWLOntologyCreationException
@@ -289,6 +300,10 @@ public class AdditionalOntologySearcher {
 
 			if (this.searchObjectPropertiesFlag()) {
 				results.addAll(this.searchByObjectProperty());
+			}
+			
+			if (this.searchDataTypePropertiesFlag()) {
+				results.addAll(this.searchByDatatypeProperty());
 			}
 
 			results = this.removeDuplicates(results);
@@ -319,7 +334,7 @@ public class AdditionalOntologySearcher {
 	}
 
 	/**
-	 * Search classes using RDFS annotations (label, comment, definition) and/or SKOS
+	 * Search object properties using RDFS annotations (label, comment, definition) and/or SKOS
 	 * annotations (prefLabel, definition, altLabels)
 	 * 
 	 * @author Josh Hanna, Zakariae Aloulen
@@ -372,6 +387,64 @@ public class AdditionalOntologySearcher {
 
 		return resultList;
 	}
+	
+	
+	
+	/**
+	 * Search datatype properties using RDFS annotations (label, comment, definition) and/or SKOS
+	 * annotations (prefLabel, definition, altLabels)
+	 * 
+	 * @author Josh Hanna, Zakariae Aloulen
+	 * @return ArrayList<SearchResult> representing all matching Datatype Properties
+	 */
+	public ArrayList<SearchResult> searchByDatatypeProperty() {
+		OWLDataFactory df = getAdditionalFactory();
+		String lowerCaseQuery = query.toLowerCase();
+
+		ArrayList<SearchResult> resultList = new ArrayList<SearchResult>();
+
+		OWLAnnotationProperty label = df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_LABEL.getIRI());
+		OWLAnnotationProperty comment = df.getOWLAnnotationProperty(OWLRDFVocabulary.RDFS_COMMENT.getIRI());
+		OWLAnnotationProperty definition = df
+				.getOWLAnnotationProperty(IRI.create(URI.create("http://purl.obolibrary.org/obo/IAO_0000115")));
+
+		// Get SKOS Annotations URIs
+		OWLAnnotationProperty labelSkos = df.getOWLAnnotationProperty(SKOSVocabulary.PREFLABEL.getIRI());
+		OWLAnnotationProperty definitionSkos = df.getOWLAnnotationProperty(SKOSVocabulary.DEFINITION.getIRI());
+		OWLAnnotationProperty altLabelSkos = df.getOWLAnnotationProperty(SKOSVocabulary.ALTLABEL.getIRI());
+
+		if (this.searchByLabelFlag()) {
+			resultList.addAll(searchDatatypeProperties(lowerCaseQuery, label));
+		}
+
+		if (this.searchByDefinitionFlag()) {
+			resultList.addAll(searchDatatypeProperties(lowerCaseQuery, definition));
+		}
+
+		if (this.searchByCommentFlag()) {
+			resultList.addAll(searchDatatypeProperties(lowerCaseQuery, comment));
+		}
+
+		// Search by SKOS Annotations
+
+		// Skos Label
+		if (this.searchBySKOSLabelFlag()) {
+			resultList.addAll(searchDatatypeProperties(lowerCaseQuery, labelSkos));
+		}
+
+		// Skos altLabels
+		if (this.searchBySKOSAltLabelsFlag()) {
+			resultList.addAll(searchDatatypeProperties(lowerCaseQuery, altLabelSkos));
+		}
+
+		// Skos Definition
+		if (this.searchBySKOSDefinitionFlag()) {
+			resultList.addAll(searchDatatypeProperties(lowerCaseQuery, definitionSkos));
+		}
+
+		return resultList;
+	}
+	
 
 	/**
 	 * 
@@ -476,6 +549,58 @@ public class AdditionalOntologySearcher {
 		}
 		return resultList;
 	}
+	
+	
+	/**
+	 * 
+	 * @author Zakariae Aloulen
+	 * @param query
+	 * @param annotationProperty
+	 * @return ArrayList<SearchResults> of any datatype properties that contain an
+	 *         annotation of type annotationProperty that matches query
+	 */
+	private ArrayList<SearchResult> searchDatatypeProperties(String query, OWLAnnotationProperty annotationProperty) {
+
+		// list of ontology and imports
+		ArrayList<OWLOntology> ontologies = new ArrayList<OWLOntology>();
+
+		ontologies.add(ontology);
+
+		Set<OWLOntology> imports = getAdditionalManager().getImports(ontology);
+
+		for (OWLOntology ont : imports) {
+			ontologies.add(ont);
+		}
+
+		ArrayList<SearchResult> resultList = new ArrayList<SearchResult>();
+
+		for (OWLOntology ont : ontologies) {
+			for (OWLDataProperty datatypeProperty : ont.getDataPropertiesInSignature()) {
+				// Get the annotations on the datatype property that use the annotation property
+				for (OWLAnnotation annotation : EntitySearcher.getAnnotations(datatypeProperty.getIRI(), ont,
+						annotationProperty)) {
+					if (annotation.getValue() instanceof OWLLiteral) {
+						OWLLiteral val2 = (OWLLiteral) annotation.getValue();
+						if (val2.getLiteral().toString().toLowerCase().contains(query)) {
+							IRI labelIri = datatypeProperty.getIRI();
+
+							String labelName = getLabel(datatypeProperty, ont);
+							String matchType = annotationProperty.toString();
+
+							String matchContext = val2.getLiteral();
+
+							SearchResult resultItem = new DatatypePropertySearchResult(labelIri, labelName, matchType,
+									matchContext, datatypeProperty, ontology);
+							resultList.add(resultItem);
+
+						}
+					}
+				}
+			}
+		}
+		return resultList;
+	}
+	
 
 	/**
 	 * 
