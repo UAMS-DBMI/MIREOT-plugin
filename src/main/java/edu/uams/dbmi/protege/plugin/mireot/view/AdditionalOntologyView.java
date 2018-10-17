@@ -1,7 +1,6 @@
 package edu.uams.dbmi.protege.plugin.mireot.view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -233,7 +232,9 @@ public class AdditionalOntologyView extends AbstractOWLViewComponent {
 
 	private JComponent createOptionsBox() {
 		JPanel optionsPanel = new JPanel();
-		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.X_AXIS));
+		//optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
+		optionsPanel.setLayout(new GridLayout(0,1));
+
 
 		Box searchByBox = new Box(BoxLayout.X_AXIS);
 		searchByBox.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY),
