@@ -29,15 +29,15 @@ import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLAnnotationProperty;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDataPropertyExpression;
 import org.semanticweb.owlapi.model.OWLObject;
-import org.semanticweb.owlapi.model.OWLObjectProperty;
-import org.semanticweb.owlapi.model.OWLObjectPropertyExpression;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyChange;
 import org.semanticweb.owlapi.model.OWLSubPropertyAxiom;
 import org.semanticweb.owlapi.model.RemoveAxiom;
 
-import edu.uams.dbmi.protege.plugin.mireot.search.transferable.OWLObjectPropertyTransferable.OWLObjectPropertyMessage;
+import edu.uams.dbmi.protege.plugin.mireot.search.transferable.OWLDatatypePropertyTransferable.OWLDatatypePropertyMessage;
 import org.semanticweb.owlapi.search.EntitySearcher;
 
 /**
@@ -45,10 +45,10 @@ import org.semanticweb.owlapi.search.EntitySearcher;
  * 
  * @author Josh Hanna
  */
-public class ObjectPropertyView extends AbstractOWLPropertyHierarchyViewComponent<OWLObjectProperty> 
+public class DatatypePropertyView extends AbstractOWLPropertyHierarchyViewComponent<OWLDataProperty> 
 implements DropTargetListener{
 
-	DataFlavor dataFlavor = new DataFlavor(OWLObjectProperty.class, OWLObjectProperty.class.getSimpleName());
+	DataFlavor dataFlavor = new DataFlavor(OWLDataProperty.class, OWLDataProperty.class.getSimpleName());
 
 	/**
 	 * 
@@ -63,41 +63,36 @@ implements DropTargetListener{
 	}
 
 
-	protected boolean isOWLObjectPropertyView() {
+	protected boolean isOWLDatatypePropertyView() {
 		return true;
 	}
 
-	protected OWLObjectHierarchyProvider<OWLObjectProperty> getHierarchyProvider() {
-		return getOWLModelManager().getOWLHierarchyManager().getOWLObjectPropertyHierarchyProvider();
-	}
 
-	protected Optional<OWLObjectHierarchyProvider<OWLObjectProperty>> getInferredHierarchyProvider() {
-		return Optional.of(getOWLModelManager().getOWLHierarchyManager().
-				getInferredOWLObjectPropertyHierarchyProvider());
-	}
 
-	protected OWLSubPropertyAxiom<?> getSubPropertyAxiom(OWLObjectProperty child, OWLObjectProperty parent) {
-		return getOWLDataFactory().getOWLSubObjectPropertyOfAxiom(child, parent);
+
+
+	protected OWLSubPropertyAxiom<?> getSubPropertyAxiom(OWLDataProperty child, OWLDataProperty parent) {
+		return getOWLDataFactory().getOWLSubDataPropertyOfAxiom(child, parent);
 	}
 
 	protected boolean canAcceptDrop(Object child, Object parent) {
-		return child instanceof OWLObjectProperty;
+		return child instanceof OWLDataProperty;
 	}
 
-	protected OWLEntityCreationSet<OWLObjectProperty> createProperty() {
-		return getOWLWorkspace().createOWLObjectProperty();
+	protected OWLEntityCreationSet<OWLDataProperty> createProperty() {
+		return getOWLWorkspace().createOWLDataProperty();
 	}
 
 	protected Icon getSubIcon() {
-		return OWLIcons.getIcon("property.object.addsub.png");
+		return OWLIcons.getIcon("property.data.addsub.png");
 	}
 
 	protected Icon getSibIcon() {
-		return OWLIcons.getIcon("property.object.addsib.png");
+		return OWLIcons.getIcon("property.data.addsib.png");
 	}
 
 	protected Icon getDeleteIcon() {
-		return OWLIcons.getIcon("property.object.delete.png");
+		return OWLIcons.getIcon("property.data.delete.png");
 	}
 
 	@Override
@@ -124,7 +119,7 @@ implements DropTargetListener{
 		// gets the cursor point
 		Point pt = dtde.getLocation();
 
-		OWLObjectTree<OWLObjectProperty> tr = getTree();
+		OWLObjectTree<OWLDataProperty> tr = getTree();
 
 		// finds the current path to the cursor in the tree
 		TreePath parentPath = tr.getClosestPathForLocation(pt.x, pt.y);
@@ -137,21 +132,21 @@ implements DropTargetListener{
 		OWLObject ob = (OWLObject) n.getOWLObject();
 
 		// get all the object properties for the object
-		Set<OWLObjectProperty> objPropSet = ob.getObjectPropertiesInSignature();
+		Set<OWLDataProperty> dataPropSet = ob.getDataPropertiesInSignature();
 
 		// create an iterator for the set. the first element is the parent property
-		Iterator<OWLObjectProperty> it = objPropSet.iterator();
-		OWLObjectProperty origin = it.next();
+		Iterator<OWLDataProperty> it = dataPropSet.iterator();
+		OWLDataProperty origin = it.next();
 
 		// get the data being transferred by the drop
 		Transferable trans = dtde.getTransferable();
 
 		if(trans.isDataFlavorSupported(dataFlavor)){
 
-			OWLObjectPropertyMessage msg = null;
+			OWLDatatypePropertyMessage msg = null;
 
 			try {
-				msg = (OWLObjectPropertyMessage) trans.getTransferData(dataFlavor);
+				msg = (OWLDatatypePropertyMessage) trans.getTransferData(dataFlavor);
 			} catch (UnsupportedFlavorException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -189,7 +184,7 @@ implements DropTargetListener{
 	}
 
 	@SuppressWarnings("unchecked")
-	private void handleLocalDrop(Transferable trans, OWLObjectProperty origin) {
+	private void handleLocalDrop(Transferable trans, OWLDataProperty origin) {
 
 		ArrayList<OWLObject> objects = null;
 		try {
@@ -204,11 +199,11 @@ implements DropTargetListener{
 
 		OWLOntology activeOnt = this.getOWLModelManager().getActiveOntology();
 
-		OWLObjectProperty objPropInTransit = null;
+		OWLDataProperty dataPropInTransit = null;
 
-		if(objects.get(0) instanceof OWLObjectProperty){
+		if(objects.get(0) instanceof OWLDataProperty){
 			// load in the additional class from the iri
-			objPropInTransit = (OWLObjectProperty) objects.get(0);
+			dataPropInTransit = (OWLDataProperty) objects.get(0);
 		} else {
 			return;
 		}
@@ -216,47 +211,47 @@ implements DropTargetListener{
 		// get the parent of the additional class. this is pointless for a
 		// non local drag but is needed to make sure the tree looks right
 		// otherwise
-		Set<OWLObjectPropertyExpression> sup = new HashSet<>(EntitySearcher.getSuperProperties(objPropInTransit, activeOnt));
-		Iterator<OWLObjectPropertyExpression> s = sup.iterator();
+		Set<OWLDataPropertyExpression> sup = new HashSet<>(EntitySearcher.getSuperProperties(dataPropInTransit, activeOnt));
+		Iterator<OWLDataPropertyExpression> s = sup.iterator();
 
 		// the first element in the superclass set is the parent (if this
 		// changes it will break the drag and drop for local)
 
-		OWLObjectPropertyExpression oc = null;
+		OWLDataPropertyExpression oc = null;
 
 		if (s.hasNext()) {
 			oc = s.next();
 		}
 
-		OWLObjectProperty fromParent = null;
+		OWLDataProperty fromParent = null;
 
 		if(oc != null){
-			fromParent = oc.asOWLObjectProperty();
+			fromParent = oc.asOWLDataProperty();
 		} 
 
 		// get the set of annotations for the additional class
-		Set<OWLAnnotation> anots = new HashSet<>(EntitySearcher.getAnnotations(objPropInTransit.getIRI(), activeOnt));
+		Set<OWLAnnotation> anots = new HashSet<>(EntitySearcher.getAnnotations(dataPropInTransit.getIRI(), activeOnt));
 
-		addObjectProperty(objPropInTransit, origin, anots);
+		addDatatypeProperty(dataPropInTransit, origin, anots);
 
-		removeParent(objPropInTransit, fromParent);
+		removeParent(dataPropInTransit, fromParent);
 
 	}
 
 
 
-	private void handleRemoteDrop(OWLObjectPropertyMessage msg, OWLObjectProperty active) {
+	private void handleRemoteDrop(OWLDatatypePropertyMessage msg, OWLDataProperty active) {
 		OWLAnnotationProperty importedFromProperty = getOWLDataFactory().getOWLAnnotationProperty(IRI.create("http://purl.obolibrary.org/obo/IAO_0000412"));
 		OWLAnnotationProperty label = getOWLDataFactory().getRDFSLabel();
 
-		OWLObjectProperty objProp = msg.getObjectProperty();
+		OWLDataProperty dtProp = msg.getDatatypeProperty();
 		OWLOntology ontology = msg.getOntology();
 
-		Set<OWLAnnotation> annotations = new HashSet<>(EntitySearcher.getAnnotations(objProp.getIRI(), ontology));
+		Set<OWLAnnotation> annotations = new HashSet<>(EntitySearcher.getAnnotations(dtProp.getIRI(), ontology));
 
 		//getting annotations from the imports, too
 		for(OWLOntology ont : ontology.getImports()){
-			annotations.addAll(EntitySearcher.getAnnotations(objProp.getIRI(), ont));
+			annotations.addAll(EntitySearcher.getAnnotations(dtProp.getIRI(), ont));
 		}
 
 		List<OWLOntologyChange> changes = new ArrayList<OWLOntologyChange>();
@@ -307,17 +302,17 @@ implements DropTargetListener{
 
 		getOWLModelManager().applyChanges(changes);
 		
-		addObjectProperty(objProp, active, annotations);
+		addDatatypeProperty(dtProp, active, annotations);
 	}
 
-	private void addObjectProperty(OWLObjectProperty child, OWLObjectProperty parent,
+	private void addDatatypeProperty(OWLDataProperty child, OWLDataProperty parent,
 			Set<OWLAnnotation> annotations) {
 
 		OWLDataFactory df = getOWLModelManager().getOWLDataFactory();
 
 
 		//can't move topObjectProperty
-		if (child.equals(getOWLModelManager().getOWLDataFactory().getOWLTopObjectProperty())) {
+		if (child.equals(getOWLModelManager().getOWLDataFactory().getOWLTopDataProperty())) {
 			return;
 		}
 
@@ -334,7 +329,7 @@ implements DropTargetListener{
 		changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), df.getOWLDeclarationAxiom(child)));
 
 		if (!df.getOWLThing().equals(parent)) {
-			changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), df.getOWLSubObjectPropertyOfAxiom(child, parent)));
+			changes.add(new AddAxiom(getOWLModelManager().getActiveOntology(), df.getOWLSubDataPropertyOfAxiom(child, parent)));
 		}
 
 		getOWLModelManager().applyChanges(changes);
@@ -342,7 +337,7 @@ implements DropTargetListener{
 
 	}
 
-	private void removeParent(OWLObjectProperty child, OWLObjectProperty parent) {
+	private void removeParent(OWLDataProperty child, OWLDataProperty parent) {
 
 		//pointless if either is null
 		if(parent == null || child == null){
@@ -353,12 +348,20 @@ implements DropTargetListener{
 
 		getOWLModelManager().applyChange(
 				new RemoveAxiom(getOWLModelManager().getActiveOntology(), 
-						df.getOWLSubObjectPropertyOfAxiom(child, parent)));
+						df.getOWLSubDataPropertyOfAxiom(child, parent)));
 	}
 
 	@Override
 	public void dropActionChanged(DropTargetDragEvent dtde) {
 		//do nothing
+	}
+	
+	protected Optional<OWLObjectHierarchyProvider<OWLDataProperty>> getInferredHierarchyProvider() {
+		 return Optional.empty();
+	}
+	
+	protected OWLObjectHierarchyProvider<OWLDataProperty> getHierarchyProvider() {
+		return getOWLModelManager().getOWLHierarchyManager().getOWLDataPropertyHierarchyProvider();
 	}
 
 }

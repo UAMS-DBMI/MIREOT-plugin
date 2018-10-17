@@ -31,14 +31,17 @@ import javax.swing.table.DefaultTableModel;
 import org.protege.editor.owl.model.event.OWLModelManagerListener;
 import org.protege.editor.owl.ui.view.AbstractOWLViewComponent;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 
 import edu.uams.dbmi.protege.plugin.mireot.search.AdditionalOntologyList;
 import edu.uams.dbmi.protege.plugin.mireot.search.AdditionalOntologySearcher;
 import edu.uams.dbmi.protege.plugin.mireot.search.result.ClassSearchResult;
+import edu.uams.dbmi.protege.plugin.mireot.search.result.DatatypePropertySearchResult;
 import edu.uams.dbmi.protege.plugin.mireot.search.result.ObjectPropertySearchResult;
 import edu.uams.dbmi.protege.plugin.mireot.search.result.SearchResult;
 import edu.uams.dbmi.protege.plugin.mireot.search.transferable.OWLClassTransferable;
+import edu.uams.dbmi.protege.plugin.mireot.search.transferable.OWLDatatypePropertyTransferable;
 import edu.uams.dbmi.protege.plugin.mireot.search.transferable.OWLObjectPropertyTransferable;
 
 /**
@@ -63,6 +66,7 @@ public class AdditionalOntologyView extends AbstractOWLViewComponent {
 
 	private JCheckBox clsCheckBox;
 	private JCheckBox objPropCheckBox;
+	private JCheckBox dataTypePropCheckBox;
 
 	private JButton executeButton;
 	private OWLModelManagerListener listener;
@@ -269,6 +273,22 @@ public class AdditionalOntologyView extends AbstractOWLViewComponent {
 			}
 		});
 
+		
+		dataTypePropCheckBox = new JCheckBox(new AbstractAction("Datatype Property") {
+			/**
+			 *
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				if (dataTypePropCheckBox.isSelected()) {
+					saoi.setSearchDataTypePropertiesFlag(true);
+				} else {
+					saoi.setSearchDataTypePropertiesFlag(false);
+				}
+			}
+		});
+		
 		// setting the class entity type as the default type to search for
 		clsCheckBox.setSelected(true);
 
@@ -276,6 +296,9 @@ public class AdditionalOntologyView extends AbstractOWLViewComponent {
 		searchBox.add(Box.createHorizontalStrut(1));
 
 		searchBox.add(objPropCheckBox);
+		searchBox.add(Box.createHorizontalStrut(1));
+		
+		searchBox.add(dataTypePropCheckBox);
 		searchBox.add(Box.createHorizontalStrut(1));
 
 		showSearchLabelCheckBox = new JCheckBox(new AbstractAction("Label") {
@@ -538,6 +561,13 @@ public class AdditionalOntologyView extends AbstractOWLViewComponent {
 
 				return new OWLObjectPropertyTransferable((OWLObjectProperty) objectPropertyTransferData.getOWLEntity(),
 						objectPropertyTransferData.getOntology(), ontologyURL);
+			}
+			
+			else if (transferData.getType().equals("Datatype Property")) {
+				DatatypePropertySearchResult datatypePropertyTransferData = (DatatypePropertySearchResult) transferData;
+
+				return new OWLDatatypePropertyTransferable((OWLDataProperty) datatypePropertyTransferData.getOWLEntity(),
+						datatypePropertyTransferData.getOntology(), ontologyURL);
 			}
 
 			return null;
